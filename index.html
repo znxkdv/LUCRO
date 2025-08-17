@@ -1,98 +1,159 @@
--- Criando GUI
-local player = game.Players.LocalPlayer
-local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
-screenGui.Name = "BugFinderGui"
-screenGui.ResetOnSpawn = false
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora de Ganhos de Afiliado</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .banner {
+            background: #eafbe8;
+            color: #137a2f;
+            text-align: center;
+            padding: 14px 7px;
+            font-size: 1em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0;
+        }
+        .container {
+            max-width: 98vw;
+            width: 100%;
+            margin: 24px auto 0 auto;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 20px 12px 18px 12px;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.2em;
+        }
+        label {
+            display: block;
+            margin-bottom: 7px;
+            margin-top: 16px;
+            color: #333;
+            font-size: 1em;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 8px;
+            font-size: 1em;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .afiliado-box {
+            margin-top: 12px;
+            margin-bottom: 18px;
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .afiliado-option {
+            flex: 1 1 0;
+            background: #f4f4f4;
+            border-radius: 6px;
+            padding: 8px 5px;
+            text-align: center;
+            font-size: 1em;
+            border: 1px solid #d2d2d2;
+            cursor: pointer;
+        }
+        .afiliado-option input {
+            accent-color: #17a14b;
+            margin-right: 4px;
+        }
+        button {
+            width: 100%;
+            background: #17a14b;
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            border-radius: 6px;
+            padding: 13px;
+            font-size: 1.05em;
+            cursor: pointer;
+            margin-top: 12px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        button:active {
+            background: #127e37;
+        }
+        .result {
+            background: #eafbe8;
+            color: #137a2f;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            font-size: 1.08em;
+        }
+        @media (max-width: 480px) {
+            .container {
+                max-width: 98vw;
+                padding: 10vw 4vw 6vw 4vw;
+            }
+            h2 {
+                font-size: 1em;
+            }
+            .banner {
+                font-size: 0.92em;
+                padding: 10px 2vw;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        TODOS OS PAGAMENTOS SÃO EFETUADOS NO PIX ENTRE 09:00 E 11:00
+    </div>
+    <div class="container">
+        <h2>Calculadora de Ganhos como Afiliado</h2>
+        <form id="calcForm" onsubmit="event.preventDefault(); calcular();">
+            <label for="qtdVendas">Quantidade de vendas do produto:</label>
+            <input type="number" id="qtdVendas" min="0" placeholder="Ex: 10" required>
 
--- Janela principal
-local frame = Instance.new("Frame", screenGui)
-frame.Size = UDim2.new(0, 400, 0, 500)
-frame.Position = UDim2.new(0.3, 0, 0.2, 0)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-frame.BorderSizePixel = 0
-frame.Active = true
-frame.Draggable = true -- deixa arrastável
+            <label for="valorMedio">Valor médio por venda (R$):</label>
+            <input type="number" id="valorMedio" min="0" step="0.01" placeholder="Ex: 120.00" required>
 
--- Cantos arredondados
-local UICorner = Instance.new("UICorner", frame)
-UICorner.CornerRadius = UDim.new(0, 15)
-
--- Título
-local title = Instance.new("TextLabel", frame)
-title.Size = UDim2.new(1, 0, 0, 40)
-title.Text = "🔍 Bug Finder - Objetos"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 22
-
-local titleCorner = Instance.new("UICorner", title)
-titleCorner.CornerRadius = UDim.new(0, 12)
-
--- Caixa de pesquisa
-local searchBox = Instance.new("TextBox", frame)
-searchBox.Size = UDim2.new(1, -20, 0, 35)
-searchBox.Position = UDim2.new(0, 10, 0, 50)
-searchBox.PlaceholderText = "Digite nome do objeto..."
-searchBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
-searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-searchBox.Font = Enum.Font.SourceSansBold
-searchBox.TextSize = 20
-
-local searchCorner = Instance.new("UICorner", searchBox)
-searchCorner.CornerRadius = UDim.new(0, 10)
-
--- Lista (ScrollingFrame)
-local scroll = Instance.new("ScrollingFrame", frame)
-scroll.Size = UDim2.new(1, -20, 1, -100)
-scroll.Position = UDim2.new(0, 10, 0, 95)
-scroll.CanvasSize = UDim2.new(0,0,0,0)
-scroll.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-scroll.ScrollBarThickness = 8
-
-local scrollCorner = Instance.new("UICorner", scroll)
-scrollCorner.CornerRadius = UDim.new(0, 10)
-
--- Função: listar objetos
-local function listarObjetos(filtro)
-    scroll:ClearAllChildren()
-    local y = 0
-
-    for _, obj in ipairs(workspace:GetDescendants()) do
-        if not filtro or string.find(obj.Name:lower(), filtro:lower()) then
-            local button = Instance.new("TextButton", scroll)
-            button.Size = UDim2.new(1, -10, 0, 40)
-            button.Position = UDim2.new(0, 5, 0, y)
-            button.Text = obj.Name
-            button.TextColor3 = Color3.fromRGB(255,255,255)
-            button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-            button.Font = Enum.Font.SourceSansBold
-            button.TextSize = 18
-
-            local btnCorner = Instance.new("UICorner", button)
-            btnCorner.CornerRadius = UDim.new(0, 8)
-
-            -- Clique = teleportar
-            button.MouseButton1Click:Connect(function()
-                local char = player.Character or player.CharacterAdded:Wait()
-                if obj:IsA("BasePart") then
-                    char:MoveTo(obj.Position)
-                    print("Teleportado para:", obj:GetFullName())
-                end
-            end)
-
-            y = y + 45
-        end
-    end
-    scroll.CanvasSize = UDim2.new(0, 0, 0, y)
-end
-
--- Atualiza quando digitar
-searchBox.FocusLost:Connect(function(enterPressed)
-    if enterPressed then
-        listarObjetos(searchBox.Text)
-    end
-end)
-
--- Lista inicial (sem filtro)
-listarObjetos(nil)
+            <div class="afiliado-box">
+                <label class="afiliado-option">
+                    <input type="radio" name="tipoAfiliado" value="1" checked>
+                    Afiliado 1 (7%)
+                </label>
+                <label class="afiliado-option">
+                    <input type="radio" name="tipoAfiliado" value="2">
+                    Afiliado 2 (20%)
+                </label>
+            </div>
+            <button type="submit">Calcular</button>
+        </form>
+        <div class="result" id="resultado" style="display:none;"></div>
+    </div>
+    <script>
+        function calcular() {
+            const vendas = Number(document.getElementById('qtdVendas').value);
+            const valor = Number(document.getElementById('valorMedio').value);
+            const tipo = document.querySelector('input[name="tipoAfiliado"]:checked').value;
+            let porcentagem = tipo === "1" ? 0.07 : 0.20;
+            let ganho = vendas * valor * porcentagem;
+            document.getElementById('resultado').style.display = 'block';
+            document.getElementById('resultado').innerText =
+                'Você irá receber: R$ ' + ganho.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+    </script>
+</body>
+</html>
