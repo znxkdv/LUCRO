@@ -1,0 +1,98 @@
+-- Criando GUI
+local player = game.Players.LocalPlayer
+local screenGui = Instance.new("ScreenGui", player:WaitForChild("PlayerGui"))
+screenGui.Name = "BugFinderGui"
+screenGui.ResetOnSpawn = false
+
+-- Janela principal
+local frame = Instance.new("Frame", screenGui)
+frame.Size = UDim2.new(0, 400, 0, 500)
+frame.Position = UDim2.new(0.3, 0, 0.2, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.BorderSizePixel = 0
+frame.Active = true
+frame.Draggable = true -- deixa arrastável
+
+-- Cantos arredondados
+local UICorner = Instance.new("UICorner", frame)
+UICorner.CornerRadius = UDim.new(0, 15)
+
+-- Título
+local title = Instance.new("TextLabel", frame)
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Text = "🔍 Bug Finder - Objetos"
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 22
+
+local titleCorner = Instance.new("UICorner", title)
+titleCorner.CornerRadius = UDim.new(0, 12)
+
+-- Caixa de pesquisa
+local searchBox = Instance.new("TextBox", frame)
+searchBox.Size = UDim2.new(1, -20, 0, 35)
+searchBox.Position = UDim2.new(0, 10, 0, 50)
+searchBox.PlaceholderText = "Digite nome do objeto..."
+searchBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+searchBox.Font = Enum.Font.SourceSansBold
+searchBox.TextSize = 20
+
+local searchCorner = Instance.new("UICorner", searchBox)
+searchCorner.CornerRadius = UDim.new(0, 10)
+
+-- Lista (ScrollingFrame)
+local scroll = Instance.new("ScrollingFrame", frame)
+scroll.Size = UDim2.new(1, -20, 1, -100)
+scroll.Position = UDim2.new(0, 10, 0, 95)
+scroll.CanvasSize = UDim2.new(0,0,0,0)
+scroll.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+scroll.ScrollBarThickness = 8
+
+local scrollCorner = Instance.new("UICorner", scroll)
+scrollCorner.CornerRadius = UDim.new(0, 10)
+
+-- Função: listar objetos
+local function listarObjetos(filtro)
+    scroll:ClearAllChildren()
+    local y = 0
+
+    for _, obj in ipairs(workspace:GetDescendants()) do
+        if not filtro or string.find(obj.Name:lower(), filtro:lower()) then
+            local button = Instance.new("TextButton", scroll)
+            button.Size = UDim2.new(1, -10, 0, 40)
+            button.Position = UDim2.new(0, 5, 0, y)
+            button.Text = obj.Name
+            button.TextColor3 = Color3.fromRGB(255,255,255)
+            button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+            button.Font = Enum.Font.SourceSansBold
+            button.TextSize = 18
+
+            local btnCorner = Instance.new("UICorner", button)
+            btnCorner.CornerRadius = UDim.new(0, 8)
+
+            -- Clique = teleportar
+            button.MouseButton1Click:Connect(function()
+                local char = player.Character or player.CharacterAdded:Wait()
+                if obj:IsA("BasePart") then
+                    char:MoveTo(obj.Position)
+                    print("Teleportado para:", obj:GetFullName())
+                end
+            end)
+
+            y = y + 45
+        end
+    end
+    scroll.CanvasSize = UDim2.new(0, 0, 0, y)
+end
+
+-- Atualiza quando digitar
+searchBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        listarObjetos(searchBox.Text)
+    end
+end)
+
+-- Lista inicial (sem filtro)
+listarObjetos(nil)
